@@ -1,45 +1,107 @@
-/*using UnityEngine;
-using UnityEngine.UI;  // Para UI Text
-// Si usas TextMeshPro, descomenta la línea de abajo:
-// using TMPro;
 
-public class SpeedometerUI : MonoBehaviour
+/*using UnityEngine;
+using TMPro;
+
+public class SpeedometerTMP : MonoBehaviour
 {
-    public Rigidbody carRigidbody;     // El Rigidbody del auto
-    public Text speedText;             // UI Text para mostrar la velocidad
-    // Si usas TextMeshPro, comenta la línea de arriba y descomenta la de abajo:
-    // public TextMeshProUGUI speedText;
+    public Transform carTransform;           // El transform del auto
+    public TextMeshProUGUI speedText;        // El TextMeshProUGUI en la UI
+
+    private Vector3 lastPosition;
+    private float speed = 0f;
+
+    void Start()
+    {
+        lastPosition = carTransform.position;
+    }
 
     void Update()
     {
-        // Obtener velocidad en m/s
-        float speed = carRigidbody.velocity.magnitude;
+        // Calcular distancia recorrida entre frames
+        float distance = Vector3.Distance(carTransform.position, lastPosition);
 
-        // Convertir a km/h (opcional: multiplica por 3.6)
+        // Calcular velocidad (m/s): distancia / tiempo
+        speed = distance / Time.deltaTime;
+
+        // Convertir a km/h
         float speedKmh = speed * 3.6f;
 
         // Mostrar en pantalla (redondeado)
         speedText.text = Mathf.RoundToInt(speedKmh) + " km/h";
+
+        // Guardar posición para el próximo frame
+        lastPosition = carTransform.position;
+    }
+}
+*/
+/*using UnityEngine;
+using TMPro;
+
+public class SpeedometerTMP : MonoBehaviour
+{
+    public Transform carTransform;            // El Transform del auto
+    public TextMeshProUGUI speedText;         // El TextMeshProUGUI en la UI
+
+    private Vector3 lastPosition;
+    private float displayedSpeed = 0.5f;        // Velocidad que mostramos suavizada
+
+    void Start()
+    {
+        lastPosition = carTransform.position;
+    }
+
+    void Update()
+    {
+        // Calcular velocidad instantánea (m/s)
+        float distance = Vector3.Distance(carTransform.position, lastPosition);
+        float instantSpeed = distance / Time.deltaTime;
+
+        // Convertir a km/h
+        float instantSpeedKmh = instantSpeed * 3.6f;
+
+        // Suavizar usando Lerp (ajusta 5f si quieres que reaccione más rápido o lento)
+        displayedSpeed = Mathf.Lerp(displayedSpeed, instantSpeedKmh, Time.deltaTime * 5f);
+
+        // Mostrar en pantalla (redondeado)
+        speedText.text = Mathf.RoundToInt(displayedSpeed) + " km/h";
+
+        // Guardar posición para el próximo frame
+        lastPosition = carTransform.position;
     }
 }
 */
 using UnityEngine;
-using TMPro;  // Asegúrate de tener esto
+using TMPro;
 
 public class SpeedometerTMP : MonoBehaviour
 {
-    public Rigidbody carRigidbody;            // El Rigidbody del auto
-    public TextMeshProUGUI speedText;         // Referencia al TextMeshPro en la UI
+    public Transform carTransform;             // El Transform del auto
+    public TextMeshProUGUI speedText;          // El TextMeshProUGUI en la UI
+
+    private Vector3 lastPosition;
+    private float displayedSpeed = 0f;         // Velocidad suavizada
+
+    void Start()
+    {
+        lastPosition = carTransform.position;
+    }
 
     void Update()
     {
-        // Obtener velocidad en m/s
-        float speed = carRigidbody.velocity.magnitude;
+        // Calcular velocidad instantánea (m/s)
+        float distance = Vector3.Distance(carTransform.position, lastPosition);
+        float instantSpeed = distance / Time.deltaTime;
 
-        // Convertir a km/h (multiplica por 3.6)
-        float speedKmh = speed * 3.6f;
+        // Convertir a km/h
+        float instantSpeedKmh = instantSpeed * 3.6f;
+
+        // Suavizar más lento usando Lerp (ajusta 2f si quieres aún más suavidad)
+        displayedSpeed = Mathf.Lerp(displayedSpeed, instantSpeedKmh, Time.deltaTime * 3f);
 
         // Mostrar en pantalla (redondeado)
-        speedText.text = Mathf.RoundToInt(speedKmh) + " km/h";
+        speedText.text = Mathf.RoundToInt(displayedSpeed) + " km/h";
+
+        // Guardar posición para el próximo frame
+        lastPosition = carTransform.position;
     }
 }
